@@ -2,6 +2,7 @@ import pandas as pd
 from pathlib import Path
 from utils.database import get_main_connection
 from models.sensor_data import insert_sensor_data
+from models.equipment import find_equipment_by_tag_location
 
 
 def read_excel_file(file_path, sheet_name):
@@ -55,13 +56,21 @@ def main():
         print("Menghubungkan ke database...")
         conn = get_main_connection()
 
-        # Buat kelompok sensor
-        # sensor_groups, names = create_sensor_groups(df)
-        # for name in names:
-        #     print(sensor_groups[name])
+        equipment = find_equipment_by_tag_location(conn, location_tag=sheet_name)
 
-        # Insert data
-        # insert_sensor_data(conn, sensor_groups)
+        # Buat kelompok sensor
+        sensor_groups, names = create_sensor_groups(df)
+        for name in names:
+            name = name.replace("_", " ")
+            name = name.upper()
+
+            insert_sensor_data(
+                conn=conn,
+                equipment_id=equipment[0],
+                part_name=name,
+                type_id=None,
+                location_tag="NON DCS",
+            )
 
     except Exception as e:
         print(f"Terjadi kesalahan: {str(e)}")
