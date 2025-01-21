@@ -1,4 +1,5 @@
 from psycopg2.extras import execute_batch
+import uuid
 
 
 def insert_sensor_data(conn, sensor_groups):
@@ -19,6 +20,7 @@ def insert_sensor_data(conn, sensor_groups):
                 # Konversi DataFrame ke list of tuples untuk batch insert
                 data = [
                     (
+                        str(uuid.uuid4()),
                         row["Date"],
                         row["Measurement Point"],
                         row["Directions"],
