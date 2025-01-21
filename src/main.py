@@ -1,7 +1,11 @@
 import pandas as pd
 from pathlib import Path
 from utils.database import get_main_connection
-from models.sensor_data import insert_sensor_data
+from models.sensor_data import (
+    insert_sensor_data,
+    find_sensor_data_by_part_name,
+    insert_sensor_to_feature,
+)
 from models.equipment import find_equipment_by_tag_location
 
 
@@ -43,6 +47,7 @@ def main():
         current_dir = Path(__file__).parent
         excel_file = current_dir.parent / "public" / "nondcs.xlsx"
         sheet_name = "3FW-P020B"
+        features_id = "9dcb7e40-ada7-43eb-baf4-2ed584233de7"
 
         if not excel_file.exists():
             print(f"File tidak ditemukan di: {excel_file}")
@@ -60,18 +65,38 @@ def main():
 
         # Buat kelompok sensor
         sensor_groups, names = create_sensor_groups(df)
+        # for name in names:
+        #     name = name.replace("_", " ")
+        #     name = name.upper()
+
+        #     insert_sensor_data(
+        #         conn=conn,
+        #         equipment_id=equipment[0],
+        #         part_name=name,
+        #         type_id=None,
+        #         location_tag="NON DCS",
+        #     )
+
         for name in names:
+            old_name = name
             name = name.replace("_", " ")
             name = name.upper()
+            part = find_sensor_data_by_part_name(conn, name, equipment[0])
 
-            insert_sensor_data(
-                conn=conn,
-                equipment_id=equipment[0],
-                part_name=name,
-                type_id=None,
-                location_tag="NON DCS",
-            )
+            for index, feature in sensor_groups[old_name].iterrows():
+                value = (
+                    feature["Vibration Value"]
+                    if feature["Vibration Value"] != "-"
+                    else 0
+                )
 
+                insert_sensor_to_feature(
+                    conn=conn,
+                    part_id=part[0],
+                    features_id=features_id,
+                    value=value,
+                    date_time=feature["Date"],
+                )
     except Exception as e:
         print(f"Terjadi kesalahan: {str(e)}")
 
