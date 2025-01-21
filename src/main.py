@@ -5,6 +5,7 @@ from models.sensor_data import (
     insert_sensor_data,
     find_sensor_data_by_part_name,
     insert_sensor_to_feature,
+    insert_detail_sensor_data,
 )
 from models.equipment import find_equipment_by_tag_location
 
@@ -46,7 +47,7 @@ def main():
         # Baca file Excel
         current_dir = Path(__file__).parent
         excel_file = current_dir.parent / "public" / "nondcs.xlsx"
-        sheet_name = "3FW-P020B"
+        sheet_name = "3CW-P010A"
         features_id = "9dcb7e40-ada7-43eb-baf4-2ed584233de7"
 
         if not excel_file.exists():
@@ -65,17 +66,36 @@ def main():
 
         # Buat kelompok sensor
         sensor_groups, names = create_sensor_groups(df)
-        # for name in names:
-        #     name = name.replace("_", " ")
-        #     name = name.upper()
+        for name in names:
+            old_name = name
+            name = name.replace("_", " ")
+            name = name.upper()
 
-        #     insert_sensor_data(
-        #         conn=conn,
-        #         equipment_id=equipment[0],
-        #         part_name=name,
-        #         type_id=None,
-        #         location_tag="NON DCS",
-        #     )
+            insert_sensor_data(
+                conn=conn,
+                equipment_id=equipment[0],
+                part_name=name,
+                type_id=None,
+                location_tag="NON DCS",
+            )
+
+            part = find_sensor_data_by_part_name(conn, name, equipment[0])
+            feature = sensor_groups[old_name].iloc[0]
+            one_hundred_percent_condition = float(feature["Normal Value"])
+            upper_threshold = float(feature["Unnamed: 5"])
+            lower_threshold = float(feature["Unnamed: 6"])
+
+            insert_detail_sensor_data(
+                conn=conn,
+                part_id=part[0],
+                upper_threshold=upper_threshold,
+                lower_threshold=lower_threshold,
+                one_hundred_percent_condition=one_hundred_percent_condition,
+                percent_condition=None,
+                time_failure=None,
+                predict_status=None,
+                predict_value=None,
+            )
 
         for name in names:
             old_name = name

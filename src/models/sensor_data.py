@@ -36,6 +36,40 @@ def insert_sensor_to_feature(conn, part_id, features_id, value, date_time):
         print(f"Error inserting sensor to feature: {e}")
 
 
+def insert_detail_sensor_data(
+    conn,
+    part_id,
+    upper_threshold,
+    lower_threshold,
+    predict_status,
+    time_failure,
+    predict_value,
+    one_hundred_percent_condition,
+    percent_condition,
+):
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO pf_details (id, part_id, upper_threshold, lower_threshold, predict_status, time_failure, predict_value, one_hundred_percent_condition, percent_condition, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (
+                    str(uuid.uuid4()),
+                    part_id,
+                    upper_threshold,
+                    lower_threshold,
+                    predict_status,
+                    time_failure,
+                    predict_value,
+                    one_hundred_percent_condition,
+                    percent_condition,
+                    datetime.now(),
+                    datetime.now(),
+                ),
+            )
+            conn.commit()
+    except Exception as e:
+        print(f"Error inserting detail sensor data: {e}")
+
+
 def insert_sensor_data(
     conn, equipment_id, part_name, type_id, location_tag="NON DCS", web_id=None
 ):
