@@ -20,7 +20,7 @@ def insert_sensor_to_feature(conn, part_id, features_id, value, date_time):
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO dl_features_data_copy (id,features_id, part_id, date_time, value, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                "INSERT INTO dl_features_data (id,features_id, part_id, date_time, value, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 (
                     str(uuid.uuid4()),
                     features_id,
