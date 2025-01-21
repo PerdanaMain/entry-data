@@ -42,22 +42,8 @@ def create_sensor_groups(df):
     return sensor_groups, names
 
 
-def main():
+def execute(df, features_id, sheet_name):
     try:
-        # Baca file Excel
-        current_dir = Path(__file__).parent
-        excel_file = current_dir.parent / "public" / "nondcs.xlsx"
-        sheet_name = "3CW-P010A"
-        features_id = "9dcb7e40-ada7-43eb-baf4-2ed584233de7"
-
-        if not excel_file.exists():
-            print(f"File tidak ditemukan di: {excel_file}")
-            return
-
-        df = read_excel_file(excel_file, sheet_name)
-        if df is None:
-            return
-
         # Setup database connection
         print("Menghubungkan ke database...")
         conn = get_main_connection()
@@ -119,6 +105,27 @@ def main():
                 )
     except Exception as e:
         print(f"Terjadi kesalahan: {str(e)}")
+
+
+def main():
+    # Baca file Excel
+    current_dir = Path(__file__).parent
+    excel_file = current_dir.parent / "public" / "nondcs.xlsx"
+    features_id = "9dcb7e40-ada7-43eb-baf4-2ed584233de7"
+
+    if not excel_file.exists():
+        print(f"File tidak ditemukan di: {excel_file}")
+        return
+
+    xl = pd.ExcelFile(excel_file)
+    sheet_names = xl.sheet_names
+
+    for sheet_name in sheet_names:
+        df = pd.read_excel(excel_file, sheet_name=sheet_name)
+        if df is None:
+            print(f"Melewati sheet {sheet_name} karena error")
+            continue
+        execute(df, features_id, sheet_name)
 
 
 if __name__ == "__main__":
