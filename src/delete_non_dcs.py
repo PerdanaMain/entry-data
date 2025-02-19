@@ -14,15 +14,16 @@ def main():
     parts = find_sensor_non_dcs(conn=conn)
 
     for part in parts:
-        # find_predict_by_part_id(conn=conn, part_id=part["id"])
+        # res = find_predict_by_part_id(conn=conn, part_id=part["id"])
         # delete_predict_by_part_id(conn=conn, part_id=part["id"])
 
-        # res = find_feature_by_part_id(conn=conn, part_id=part["id"])
+        res = find_feature_by_part_id(conn=conn, part_id=part["id"])
+        print(len(res))
         # delete_feature_by_part_id(conn=conn, part_id=part["id"])
 
         # delete_detail_sensor_data(conn=conn, part_id=part["id"])
 
-        delete_non_dcs_sensor_data(conn=conn, part_id=part["id"])
+        # delete_non_dcs_sensor_data(conn=conn, part_id=part["id"])
 
 
 if __name__ == "__main__":
