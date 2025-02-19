@@ -16,6 +16,30 @@ def find_sensor_data_by_part_name(conn, part_name, equipment_id):
         return None
 
 
+def find_sensor_data_by_equipment_id(conn, equipment_id):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+                SELECT 
+                    mem.name as equipment_name,
+                    mem.location_tag as equipment_tag,
+                    pp.part_name,
+                    pp.location_tag as sensor_tag
+                FROM pf_parts pp 
+                JOIN ms_equipment_master mem ON pp.equipment_id = mem.id
+                WHERE equipment_id = %s
+            """
+
+            cur.execute(sql, (equipment_id,))
+            columns = [col[0] for col in cur.description]
+            result = cur.fetchall()
+            return [dict(zip(columns, row)) for row in result]
+
+    except Exception as e:
+        print(f"Error finding sensor data by part name: {e}")
+        return None
+
+
 def insert_sensor_to_feature(conn, part_id, features_id, value, date_time):
     try:
         with conn.cursor() as cur:
