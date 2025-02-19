@@ -40,6 +40,65 @@ def find_sensor_data_by_equipment_id(conn, equipment_id):
         return None
 
 
+def find_sensor_non_dcs(conn):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+                SELECT 
+                    pp.*
+                FROM pf_parts pp 
+                WHERE pp.web_id IS NULL
+            """
+
+            cur.execute(sql)
+            columns = [col[0] for col in cur.description]
+            result = cur.fetchall()
+            return [dict(zip(columns, row)) for row in result]
+
+    except Exception as e:
+        print(f"Error finding sensor data by part name: {e}")
+        return None
+
+
+def delete_non_dcs_sensor_data(conn, part_id):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+            DELETE
+            FROM pf_parts pp 
+            WHERE pp.id = %s
+            """
+
+            cur.execute(
+                sql,
+                (part_id,),
+            )
+            conn.commit()
+            print(f"Deleted non dcs sensor data by part id: {part_id}")
+    except Exception as e:
+        print(f"Error deleting non dcs sensor data by part id: {e}")
+        return None
+
+
+def delete_detail_sensor_data(conn, part_id):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+            DELETE
+            FROM pf_details pd 
+            WHERE pd.part_id = %s
+            """
+
+            cur.execute(
+                sql,
+                (part_id,),
+            )
+            conn.commit()
+            print(f"Deleted detail sensor data by part id: {part_id}")
+    except Exception as e:
+        print(f"Error deleting detail sensor data by part id: {e}")
+
+
 def insert_sensor_to_feature(conn, part_id, features_id, value, date_time):
     try:
         with conn.cursor() as cur:
