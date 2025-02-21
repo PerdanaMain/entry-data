@@ -31,3 +31,26 @@ def get_equipment_on_parts(conn):
     except Exception as e:
         print(f"Error getting equipment on parts: {e}")
         return None
+
+
+def get_equipment_by_tag_and_name(conn, tag_location, equipment_name):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+            SELECT *
+            FROM ms_equipment_master
+            WHERE location_tag = %s AND name = %s
+            """
+
+            cur.execute(
+                sql,
+                (tag_location, equipment_name),
+            )
+            columns = [col[0] for col in cur.description]
+            result = cur.fetchall()
+            result = dict(zip(columns, result[0]))
+
+            return result
+    except Exception as e:
+        print(f"Error getting equipment by tag name: {e}")
+        return None

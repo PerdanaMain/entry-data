@@ -16,6 +16,39 @@ def find_sensor_data_by_part_name(conn, part_name, equipment_id):
         return None
 
 
+def find_sensor_by_equipment(conn, equipment_id, part_name):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+                SELECT 
+                    pp.id as part_id,
+                    pp.web_id,
+                    pp.part_name,
+                    pp.location_tag,
+                    mem.id as equipment_id,
+                    mem.name as equipment_name,
+                    mem.location_tag as equipment_tag
+                FROM pf_parts pp 
+                JOIN ms_equipment_master mem ON pp.equipment_id = mem.id
+                WHERE mem.id = %s AND pp.part_name = %s
+            """
+
+            cur.execute(
+                sql,
+                (
+                    equipment_id,
+                    part_name,
+                ),
+            )
+            columns = [col[0] for col in cur.description]
+            result = cur.fetchone()
+            return dict(zip(columns, result))
+
+    except Exception as e:
+        print(f"Error finding sensor data by part name: {e}")
+        return None
+
+
 def find_sensor_data_by_equipment_id(conn, equipment_id):
     try:
         with conn.cursor() as cur:
@@ -185,3 +218,28 @@ def insert_sensor_data(
         conn.rollback()
         print(f"Terjadi kesalahan saat menyimpan data: {str(e)}")
         raise
+
+
+def update_web_id_sensor_data(conn, part_id, web_id):
+    try:
+        now = datetime.now()
+        with conn.cursor() as cur:
+            sql = """
+                UPDATE pf_parts
+                SET web_id = %s, updated_at = %s
+                WHERE id = %s
+            """
+
+            cur.execute(
+                sql,
+                (
+                    web_id,
+                    now,
+                    part_id,
+                ),
+            )
+            conn.commit()
+            print(f"Updated web id sensor data by part id: {part_id}")
+    except Exception as e:
+        print(f"Error updating web id sensor data by part id: {e}")
+        return None

@@ -18,7 +18,7 @@ def get_main_connection():
         return None
 
 
-def get_collector_connectino():
+def get_collector_connection():
     try:
         conn = psycopg2.connect(
             host=Config.DB_COLLECTOR_HOST,
