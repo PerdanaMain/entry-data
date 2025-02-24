@@ -3,6 +3,32 @@ from datetime import datetime
 import uuid
 
 
+def find_all_sensors(conn):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+                SELECT 
+                    pp.id as part_id,
+                    pp.web_id,
+                    pp.part_name,
+                    pp.location_tag,
+                    mem.id as equipment_id,
+                    mem.name as equipment_name,
+                    mem.location_tag as equipment_tag
+                FROM pf_parts pp
+                JOIN ms_equipment_master mem ON pp.equipment_id = mem.id
+            """
+
+            cur.execute(sql)
+            coloumns = [col[0] for col in cur.description]
+            result = cur.fetchall()
+
+            return [dict(zip(coloumns, row)) for row in result]
+    except Exception as e:
+        print(f"Error finding sensor data by part name: {e}")
+        return None
+
+
 def find_sensor_data_by_part_name(conn, part_name, equipment_id):
     try:
         with conn.cursor() as cur:

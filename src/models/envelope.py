@@ -2,9 +2,12 @@ def find_envelope_by_part_id(conn, part_id):
     try:
         with conn.cursor() as cur:
             sql = """
-            SELECT * 
+            SELECT 
+                def.value,
+                def.created_at as datetime
             FROM dl_envelope_fetch def
             WHERE def.part_id = %s
+            ORDER BY def.created_at ASC
             """
 
             cur.execute(

@@ -43,38 +43,11 @@ def main():
         not_found = []
         same_web_id = []
 
-        # remove_affected_fields(part["part_id"])
-        # update_web_id_sensor_data(conn, part["part_id"], find["Web_id"])
+        webxlsx = "F1DPw1kUu10ziUaXEx2rIyo4pAAg4AAAS1RKQi1LSTAwLVBJMVxUSkIzLkxQVCBCIEVYSEQgVEVNUCBUVVJCIFNJREU"
+        webdb = "F1DPw1kUu10ziUaXEx2rIyo4pAbwsAAAS1RKQi1LSTAwLVBJMVxUSkIzLkJTVFIgRkFOIEIgQ1VS"
 
-        # res = part["web_id"] == find["Web_id"]
-
-        for index, row in df.iterrows():
-            equipment = get_equipment_by_tag_and_name(
-                conn=conn,
-                tag_location=row["TAG LOCATION"],
-                equipment_name=row["EQUIPMENT"],
-            )
-            try:
-                print(equipment["id"])
-                print(row["SENSOR"])
-                part = find_sensor_by_equipment(conn, equipment["id"], row["SENSOR"])
-                print(part)
-
-                # if part is not None:
-                #     found.append(row)
-                # else:
-                #     not_found.append(row)
-            except Exception as e:
-                print(f"Error: {str(e)}")
-
-        # print("\nData yang tidak ditemukan:")
-        # print(len(part))
-
-        # print("\nData yang tidak ditemukan:")
-        # print(len(not_found))
-
-        # print("\nData yang sama Web ID:")
-        # print(len(same_web_id))
+        res = webxlsx == webdb
+        print(res)
 
     except Exception as e:
         print(f"Terjadi kesalahan: {str(e)}")
