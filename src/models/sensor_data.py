@@ -19,6 +19,7 @@ def find_sensor_data_by_part_name(conn, part_name, equipment_id):
 def find_sensor_by_equipment(conn, equipment_id, part_name):
     try:
         with conn.cursor() as cur:
+            like_name = f"%{part_name}%"
             sql = """
                 SELECT 
                     pp.id as part_id,
@@ -30,14 +31,14 @@ def find_sensor_by_equipment(conn, equipment_id, part_name):
                     mem.location_tag as equipment_tag
                 FROM pf_parts pp 
                 JOIN ms_equipment_master mem ON pp.equipment_id = mem.id
-                WHERE mem.id = %s AND pp.part_name = %s
+                WHERE mem.id = %s AND pp.part_name like %s
             """
 
             cur.execute(
                 sql,
                 (
                     equipment_id,
-                    part_name,
+                    like_name,
                 ),
             )
             columns = [col[0] for col in cur.description]

@@ -36,15 +36,17 @@ def get_equipment_on_parts(conn):
 def get_equipment_by_tag_and_name(conn, tag_location, equipment_name):
     try:
         with conn.cursor() as cur:
+            like_name = f"%{equipment_name}%"
+
             sql = """
             SELECT *
             FROM ms_equipment_master
-            WHERE location_tag = %s AND name = %s
+            WHERE location_tag = %s OR name like %s
             """
 
             cur.execute(
                 sql,
-                (tag_location, equipment_name),
+                (tag_location, like_name),
             )
             columns = [col[0] for col in cur.description]
             result = cur.fetchall()
