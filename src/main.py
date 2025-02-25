@@ -1,4 +1,4 @@
-import pandas as pd
+import pandas as pd  # type: ignore
 from pathlib import Path
 from utils.database import get_main_connection
 from models.sensor_data import (
@@ -129,5 +129,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    print("Hai")
+    main()
+    # print("Hai")
