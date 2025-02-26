@@ -1,4 +1,4 @@
-from psycopg2.extras import execute_batch
+from psycopg2.extras import execute_batch  # type: ignore
 from datetime import datetime
 import uuid
 
@@ -24,6 +24,36 @@ def find_all_sensors(conn):
             result = cur.fetchall()
 
             return [dict(zip(coloumns, row)) for row in result]
+    except Exception as e:
+        print(f"Error finding sensor data by part name: {e}")
+        return None
+
+
+def find_single_sensor(conn, equipment_name, part_name):
+    try:
+        with conn.cursor() as cur:
+            equipment_like = f"%{equipment_name}%"
+            part_like = f"%{part_name}%"
+
+            sql = """
+                select 
+                    mem.id as equipment_id,
+                    mem.name as equipment_name,
+                    mem.location_tag as tag_location,
+                    pp.id as part_id,
+                    pp.part_name,
+                    pp.location_tag as tag_sensor,
+                    pp.web_id
+                from pf_parts pp 
+                join ms_equipment_master mem on mem.id = pp.equipment_id
+                where mem.name like %s and pp.part_name like %s
+            """
+
+            cur.execute(sql, (equipment_like, part_like))
+            coloumns = [col[0] for col in cur.description]
+            result = cur.fetchone()
+
+            return dict(zip(coloumns, result))
     except Exception as e:
         print(f"Error finding sensor data by part name: {e}")
         return None
