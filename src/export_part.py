@@ -74,11 +74,11 @@ def main():
     parts = find_all_sensors(conn=conn)
     dir = "public/export/values/"
 
-    for part in parts:
-        envelopes = find_envelope_by_part_id(conn=connn, part_id=part["part_id"])
-        if envelopes is not None:  # Only export if there's data
-            filename = f"{part["equipment_name"]} - {part['part_name']}.xlsx"
-            export_to_xlsx(envelopes, dir, filename)
+    # for part in parts:
+    #     envelopes = find_envelope_by_part_id(conn=connn, part_id=part["part_id"])
+    #     if envelopes is not None:  # Only export if there's data
+    #         filename = f"{part["equipment_name"]} - {part['part_name']}.xlsx"
+    #         export_to_xlsx(envelopes, dir, filename)
 
     # for equipment in equipments:
     #     parts = find_sensor_data_by_equipment_id(conn, equipment["equipment_id"])
