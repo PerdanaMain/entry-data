@@ -29,6 +29,33 @@ def find_all_sensors(conn):
         return None
 
 
+def find_sensor_by_id(conn, part_id):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+                select 
+                    mem.id as equipment_id,
+                    mem.name as equipment_name,
+                    mem.location_tag as tag_location,
+                    pp.id as part_id,
+                    pp.part_name,
+                    pp.location_tag as tag_sensor,
+                    pp.web_id
+                from pf_parts pp 
+                join ms_equipment_master mem on mem.id = pp.equipment_id
+                where pp.id = %s
+            """
+
+            cur.execute(sql, (part_id,))
+            coloumns = [col[0] for col in cur.description]
+            result = cur.fetchone()
+
+            return dict(zip(coloumns, result))
+    except Exception as e:
+        print(f"Error finding sensor data by part name: {e}")
+        return None
+
+
 def find_single_sensor(conn, equipment_name, part_name):
     try:
         with conn.cursor() as cur:

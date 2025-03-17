@@ -14,15 +14,13 @@ def remove_affected_fields(part_id):
     connn = get_collector_connection()
     try:
         # remove the predict
-        # delete_predict_by_part_id(conn, part_id)
+        delete_predict_by_part_id(conn, part_id)
 
         # remove the feature
-        # delete_feature_by_part_id(conn, part_id)
+        delete_feature_by_part_id(conn, part_id)
 
         # remove the envelope
-        # delete_envelope_by_part_id(conn, part_id)
-        envelopes = find_envelope_by_part_id(connn, part_id)
-        print(len(envelopes))
+        delete_envelope_by_part_id(connn, part_id)
 
     except Exception as e:
         print(f"Error removing affected fields: {e}")
@@ -35,23 +33,25 @@ def main():
     path = current_dir.parent / "public" / "r.xlsx"
     sheet_name = "Reset"
     conn = get_main_connection()
+    part_id = "215c035b-bea8-4c70-94e5-210e6bbe3a5f"
+    remove_affected_fields(part_id)
 
-    try:
-        df = pd.read_excel(path, sheet_name=sheet_name)
+    # web_db = "F1DPw1kUu10ziUaXEx2rIyo4pADA8AAAS1RKQi1LSTAwLVBJMVxUSkIzLlBVTFZFUklaRVIgRiBMVUIgT0lMIFBSRVNT"
+    # web_xlsx = "F1DPw1kUu10ziUaXEx2rIyo4pADQ8AAAS1RKQi1LSTAwLVBJMVxUSkIzLlBVTFZFUklaRVIgRiBMVUIgT0lMIFRFTVA"
 
-        found = []
-        not_found = []
-        same_web_id = []
+    # try:
+    #     res = web_db == web_xlsx
+    #     print(res)
+    #     if res != True:
+    #         print("Web ID tidak sama")
+    #         remove_affected_fields(part_id)
+    #     else:
+    #         print("Web ID sama")
 
-        webxlsx = "F1DPw1kUu10ziUaXEx2rIyo4pAAg4AAAS1RKQi1LSTAwLVBJMVxUSkIzLkxQVCBCIEVYSEQgVEVNUCBUVVJCIFNJREU"
-        webdb = "F1DPw1kUu10ziUaXEx2rIyo4pAbwsAAAS1RKQi1LSTAwLVBJMVxUSkIzLkJTVFIgRkFOIEIgQ1VS"
-
-        res = webxlsx == webdb
-        print(res)
-
-    except Exception as e:
-        print(f"Terjadi kesalahan: {str(e)}")
+    # except Exception as e:
+    # print(f"Terjadi kesalahan: {str(e)}")
 
 
 if __name__ == "__main__":
     main()
+    # print("Hai")
