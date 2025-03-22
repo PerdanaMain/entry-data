@@ -33,7 +33,7 @@ def main():
     path = current_dir.parent / "public" / "r.xlsx"
     sheet_name = "Reset"
     conn = get_main_connection()
-    part_id = "215c035b-bea8-4c70-94e5-210e6bbe3a5f"
+    part_id = "33a1ef3b-5c0d-47eb-84ab-e1c63f8e9241"
     remove_affected_fields(part_id)
 
     # web_db = "F1DPw1kUu10ziUaXEx2rIyo4pADA8AAAS1RKQi1LSTAwLVBJMVxUSkIzLlBVTFZFUklaRVIgRiBMVUIgT0lMIFBSRVNT"

@@ -5,7 +5,7 @@ def find_interpolated_by_tag_id(conn, tag_id):
                 SELECT 
                     interpolated.value,
                     interpolated.time_stamp
-                FROM dl_value_tag_interpolated interpolated
+                FROM dl_value_tag_interpolated_temp interpolated
                 WHERE interpolated.tag_id = %s
                 ORDER BY interpolated.time_stamp ASC
                 """
