@@ -56,3 +56,26 @@ def get_equipment_by_tag_and_name(conn, tag_location, equipment_name):
     except Exception as e:
         print(f"Error getting equipment by tag name: {e}")
         return None
+
+
+def get_equipment_by_tag(conn, tag_location):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+            SELECT *
+            FROM ms_equipment_master
+            WHERE location_tag = %s
+            """
+
+            cur.execute(
+                sql,
+                (tag_location,),
+            )
+            columns = [col[0] for col in cur.description]
+            result = cur.fetchall()
+            result = dict(zip(columns, result[0]))
+
+            return result
+    except Exception as e:
+        print(f"Error getting equipment by tag name: {e}")
+        return None

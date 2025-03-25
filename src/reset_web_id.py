@@ -1,10 +1,11 @@
 from pathlib import Path
 from utils.database import get_main_connection, get_collector_connection
-from models.equipment import get_equipment_by_tag_and_name
+from models.equipment import *
 from models.envelope import delete_envelope_by_part_id, find_envelope_by_part_id
-from models.sensor_data import find_sensor_by_equipment, update_web_id_sensor_data
+from models.sensor_data import *
 from models.predict import delete_predict_by_part_id
 from models.feature import delete_feature_by_part_id
+from main import read_excel_file
 
 import pandas as pd
 
@@ -28,28 +29,41 @@ def remove_affected_fields(part_id):
         conn.close()
 
 
+def remove_sensor_data(part_id):
+    conn = get_main_connection()
+    try:
+        # remove the sensor data
+        delete_detail_sensor_data(conn, part_id)
+        delete_sensor_data(conn, part_id)
+    except Exception as e:
+        print(f"Error removing sensor data: {e}")
+    finally:
+        conn.close()
+
+
 def main():
     current_dir = Path(__file__).parent
-    path = current_dir.parent / "public" / "r.xlsx"
-    sheet_name = "Reset"
+    path = current_dir.parent / "public" / "deleted-tag.xlsx"
+    sheet_name = "Sheet1"
     conn = get_main_connection()
-    part_id = "33a1ef3b-5c0d-47eb-84ab-e1c63f8e9241"
-    remove_affected_fields(part_id)
+    # part_id = "33a1ef3b-5c0d-47eb-84ab-e1c63f8e9241"
+    # remove_affected_fields(part_id)
 
-    # web_db = "F1DPw1kUu10ziUaXEx2rIyo4pADA8AAAS1RKQi1LSTAwLVBJMVxUSkIzLlBVTFZFUklaRVIgRiBMVUIgT0lMIFBSRVNT"
-    # web_xlsx = "F1DPw1kUu10ziUaXEx2rIyo4pADQ8AAAS1RKQi1LSTAwLVBJMVxUSkIzLlBVTFZFUklaRVIgRiBMVUIgT0lMIFRFTVA"
+    df = read_excel_file(path, sheet_name)
+    # remove first row
+    df = df
 
-    # try:
-    #     res = web_db == web_xlsx
-    #     print(res)
-    #     if res != True:
-    #         print("Web ID tidak sama")
-    #         remove_affected_fields(part_id)
-    #     else:
-    #         print("Web ID sama")
-
-    # except Exception as e:
-    # print(f"Terjadi kesalahan: {str(e)}")
+    for index, row in df.iterrows():
+        equipment = get_equipment_by_tag(conn, row["Unnamed: 1"])
+        if equipment is not None:
+            print(equipment["id"])
+            sensors = find_sensor_data_by_equipment_id(conn, equipment["id"])
+            for sensor in sensors:
+                print(sensor)
+                # remove_affected_fields(sensor["part_id"])
+                # remove_sensor_data(sensor["part_id"])
+        # for sensor in sensors:
+        # print(sensor)
 
 
 if __name__ == "__main__":

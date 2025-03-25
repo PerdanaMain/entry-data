@@ -140,6 +140,7 @@ def find_sensor_data_by_equipment_id(conn, equipment_id):
                 SELECT 
                     mem.name as equipment_name,
                     mem.location_tag as equipment_tag,
+                    pp.id as part_id,
                     pp.part_name,
                     pp.location_tag as sensor_tag
                 FROM pf_parts pp 
@@ -194,6 +195,26 @@ def delete_non_dcs_sensor_data(conn, part_id):
             print(f"Deleted non dcs sensor data by part id: {part_id}")
     except Exception as e:
         print(f"Error deleting non dcs sensor data by part id: {e}")
+        return None
+
+
+def delete_sensor_data(conn, part_id):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+            DELETE
+            FROM pf_parts pp 
+            WHERE pp.id = %s
+            """
+
+            cur.execute(
+                sql,
+                (part_id,),
+            )
+            conn.commit()
+            print(f"Deleted sensor data by part id: {part_id}")
+    except Exception as e:
+        print(f"Error deleting sensor data by part id: {e}")
         return None
 
 
