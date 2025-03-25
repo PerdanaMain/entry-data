@@ -158,6 +158,30 @@ def find_sensor_data_by_equipment_id(conn, equipment_id):
         return None
 
 
+def find_anomali_dcs_sensor(conn):
+    try:
+        with conn.cursor() as cur:
+            sql = """
+                SELECT 
+                    pp.id as part_id,
+                    pp.web_id,
+                    pp.part_name,
+                    pp.location_tag,
+                    pp.type_id 
+                FROM pf_parts pp 
+                where pp.web_id is not null and pp.location_tag = 'NON DCS'
+            """
+
+            cur.execute(sql)
+            columns = [col[0] for col in cur.description]
+            result = cur.fetchall()
+            return [dict(zip(columns, row)) for row in result]
+
+    except Exception as e:
+        print(f"Error finding sensor data by part name: {e}")
+        return None
+
+
 def find_sensor_non_dcs(conn):
     try:
         with conn.cursor() as cur:

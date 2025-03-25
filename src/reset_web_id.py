@@ -46,6 +46,18 @@ def main():
     path = current_dir.parent / "public" / "deleted-tag.xlsx"
     sheet_name = "Sheet1"
     conn = get_main_connection()
+
+    sensors = find_anomali_dcs_sensor(conn)
+
+    for sensor in sensors:
+        remove_affected_fields(sensor["part_id"])
+
+
+def delete_sensor_by_xlsx():
+    current_dir = Path(__file__).parent
+    path = current_dir.parent / "public" / "deleted-tag.xlsx"
+    sheet_name = "Sheet1"
+    conn = get_main_connection()
     # part_id = "33a1ef3b-5c0d-47eb-84ab-e1c63f8e9241"
     # remove_affected_fields(part_id)
 
