@@ -29,7 +29,7 @@ def export_to_xlsx(parts, dir, filename):
 def interpolated():
     conn = get_main_connection()
     connn = get_collector_connection()
-    dir = "public/export/interpolated-2/"
+    dir = "public/export/interpolated-3/"
 
     current_dir = Path(__file__).parent
     excel_file = current_dir.parent / "public" / "req.xlsx"
