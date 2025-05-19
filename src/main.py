@@ -49,9 +49,15 @@ def execute(df, features_id, sheet_name):
         conn = get_main_connection()
 
         equipment = find_equipment_by_tag_location(conn, location_tag=sheet_name)
+        print(equipment)
 
         # Buat kelompok sensor
         sensor_groups, names = create_sensor_groups(df)
+
+        print("Kelompok sensor:")
+        for name in names:
+            print(name)
+
         for name in names:
             old_name = name
             name = name.replace("_", " ")
@@ -61,13 +67,12 @@ def execute(df, features_id, sheet_name):
                 conn=conn,
                 equipment_id=equipment[0],
                 part_name=name,
-                type_id=None,
+                type_id="b45a04c6-e2e2-465a-ad84-ccefe0f324d2",
                 location_tag="NON DCS",
             )
 
             part = find_sensor_data_by_part_name(conn, name, equipment[0])
             feature = sensor_groups[old_name].iloc[0]
-            one_hundred_percent_condition = float(feature["Normal Value"])
             upper_threshold = float(feature["Unnamed: 5"])
             lower_threshold = float(feature["Unnamed: 6"])
 
@@ -76,10 +81,10 @@ def execute(df, features_id, sheet_name):
                 part_id=part[0],
                 upper_threshold=upper_threshold,
                 lower_threshold=lower_threshold,
-                one_hundred_percent_condition=one_hundred_percent_condition,
+                one_hundred_percent_condition=None,
                 percent_condition=None,
                 time_failure=None,
-                predict_status=None,
+                predict_status="normal",
                 predict_value=None,
             )
 
@@ -103,6 +108,7 @@ def execute(df, features_id, sheet_name):
                     value=value,
                     date_time=feature["Date"],
                 )
+
     except Exception as e:
         print(f"Terjadi kesalahan: {str(e)}")
 
@@ -110,7 +116,7 @@ def execute(df, features_id, sheet_name):
 def main():
     # Baca file Excel
     current_dir = Path(__file__).parent
-    excel_file = current_dir.parent / "public" / "nondcs.xlsx"
+    excel_file = current_dir.parent / "public" / "selected-non-dcs.xlsx"
     features_id = "9dcb7e40-ada7-43eb-baf4-2ed584233de7"
 
     if not excel_file.exists():
@@ -129,5 +135,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    print("Hai")
+    main()
+    # print("Hai")
